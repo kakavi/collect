@@ -38,6 +38,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.odk.collect.android.R;
+import org.odk.collect.android.activities.entities.SyncStatusActivity;
 import org.odk.collect.android.activities.viewmodels.MainMenuViewModel;
 import org.odk.collect.android.analytics.Analytics;
 import org.odk.collect.android.application.Collect;
@@ -94,6 +95,7 @@ public class MainMenuActivity extends CollectAbstractActivity implements AdminPa
     private Button viewSentFormsButton;
     private Button reviewDataButton;
     private Button getFormsButton;
+    private Button mSyncPrefillButton;
     private AlertDialog alertDialog;
     private MenuItem qrcodeScannerMenuItem;
     private int savedCount;
@@ -225,6 +227,18 @@ public class MainMenuActivity extends CollectAbstractActivity implements AdminPa
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(),
                         DeleteSavedFormActivity.class);
+                startActivity(i);
+            }
+        });
+
+        // sync prefilled data button
+        mSyncPrefillButton = (Button) findViewById(R.id.sync_prefill_data);
+        mSyncPrefillButton.setText(getString(R.string.sync_pre_filled_text));
+        mSyncPrefillButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),
+                        SyncStatusActivity.class);
                 startActivity(i);
             }
         });

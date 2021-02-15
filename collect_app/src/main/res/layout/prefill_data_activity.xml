@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <!-- Toolbar -->
+    <include layout="@layout/app_bar_layout"/>
+
+    <EditText android:id="@+id/prefill_inputSearch"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:hint="Search Data.."
+              android:inputType="textVisiblePassword"/>
+    <TextView
+            android:id="@+id/prefill_data_status_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#DDDDDD"
+            android:padding="5dp"
+            android:paddingTop="0dp"
+            android:text="@string/form_scan_starting"
+            android:textSize="14sp" />
+
+    <ListView
+            android:id="@android:id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+    <TextView
+            android:id="@+id/prefill_data_empty"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:text="@string/no_items_display"
+            android:textSize="21sp" />
+
+</LinearLayout>

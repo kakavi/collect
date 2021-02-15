@@ -23,6 +23,8 @@ import android.os.StrictMode;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
 
+import com.evernote.android.job.JobManager;
+import com.evernote.android.job.JobManagerCreateException;
 import org.jetbrains.annotations.NotNull;
 import org.odk.collect.android.BuildConfig;
 import org.odk.collect.android.application.initialization.ApplicationInitializer;
@@ -33,9 +35,11 @@ import org.odk.collect.android.injection.config.DaggerAppDependencyComponent;
 import org.odk.collect.android.javarosawrapper.FormController;
 import org.odk.collect.android.preferences.PreferencesProvider;
 import org.odk.collect.android.storage.StoragePathProvider;
+import org.odk.collect.android.sync.KengaJobCreator;
 import org.odk.collect.android.utilities.FileUtils;
 import org.odk.collect.android.utilities.LocaleHelper;
 import org.odk.collect.strings.LocalizedApplication;
+import timber.log.Timber;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -120,10 +124,19 @@ public class Collect extends Application implements LocalizedApplication {
 
         setupDagger();
         applicationInitializer.initialize();
-        
+
         fixGoogleBug154855417();
 
         setupStrictMode();
+        try {
+            JobManager
+                    .create(this)
+                    .addJobCreator(new KengaJobCreator());
+            KengaJobCreator.scheduleJobs();
+        } catch (JobManagerCreateException e) {
+            Timber.e(e);
+        }
+
     }
 
     /**
@@ -186,7 +199,8 @@ public class Collect extends Application implements LocalizedApplication {
 
     /**
      * Gets a unique, privacy-preserving identifier for a form based on its id and version.
-     * @param formId id of a form
+     *
+     * @param formId      id of a form
      * @param formVersion version of a form
      * @return md5 hash of the form title, a space, the form ID
      */

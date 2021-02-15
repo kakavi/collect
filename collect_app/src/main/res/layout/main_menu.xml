@@ -34,7 +34,7 @@
                 android:visibility="gone"
                 custom:text="blah"
                 custom:secondaryActionColor="true" />
-            
+
             <androidx.fragment.app.FragmentContainerView
                 android:name="org.odk.collect.android.fragments.MapBoxInitializationFragment"
                 android:id="@+id/map_box_initialization_fragment"
@@ -97,6 +97,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_extra_small"
                     tools:text="@string/manage_files" />
+
+                <org.odk.collect.android.views.MultiClickSafeButton
+                        android:id="@+id/sync_prefill_data"
+                        style="@style/Widget.Collect.Button.FullWidth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_extra_small"
+                        tools:text="@string/manage_files" />
 
                 <TextView
                     android:id="@+id/version_sha"

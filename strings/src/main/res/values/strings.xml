@@ -1005,4 +1005,18 @@
     <string name="not_a_directory">%s exists, but is not a directory</string>
 
     <string name="select_odk_shortcut">Select ODK Shortcut</string>
+
+<!--    custom strings -->
+    <!-- Text for an action button on the main screen. -->
+    <string name="sync_pre_filled_text">Form Data</string>
+    <string name="sync">Sync</string>
+    <string name="get_filters">Get Filters</string>
+    <string name="more_filters">More Filters</string>
+    <string name="download_data">Download Data</string>
+    <string name="mis_url">MIS Server URL</string>
+    <string name="prefill_settings">Prefill Settings</string>
+    <string name="form_data">Form Data</string>
+    <string name="change_filter">Change Filter</string>
+    <string name="view_prefill_data">View Data</string>
+    <string name="form_scan_starting">Scanning for forms…</string>
 </resources>

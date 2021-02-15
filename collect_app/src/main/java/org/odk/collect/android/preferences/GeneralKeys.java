@@ -17,6 +17,7 @@ public final class GeneralKeys {
     public static final String KEY_SERVER_URL = "server_url";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
+    public static final String KEY_MIS_URL = "mis_url";
 
     // custom_server_paths_preferences.xmlreferences.xml
     public static final String KEY_FORMLIST_URL = "formlist_url";
