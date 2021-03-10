@@ -218,7 +218,7 @@ public class KengaSyncroniser {
     public boolean platformSettingsEntered() {
         String username = (String) settings.get(GeneralKeys.KEY_USERNAME);
         String password = (String) settings.get(GeneralKeys.KEY_PASSWORD);
-        if (username == null || password == null) {
+        if (username.equalsIgnoreCase("") || password.equalsIgnoreCase("")) {
             return false;
         }
         return true;
@@ -297,7 +297,7 @@ public class KengaSyncroniser {
     public void syncPrefillData(final boolean isBackgroundJob) {
         Log.e(TAG, "Syncing pre-fill entities");
         List<ExEntity> entityList = entityDao.loadAll();
-        forwardLoop(entityList,0,isBackgroundJob);
+        forwardLoop(entityList, 0, isBackgroundJob);
 
        /* for (final ExEntity exEntity : entityList) {
             List<PreFillFilter> preFillFilterList = prefillDao.findAllByTableName(exEntity.getTableName());
@@ -334,15 +334,15 @@ public class KengaSyncroniser {
 
     }
 
-    private void forwardLoop(final List<ExEntity> entityList, int idx, final boolean isBackgroundJob){
-        if(idx>= entityList.size()){
+    private void forwardLoop(final List<ExEntity> entityList, int idx, final boolean isBackgroundJob) {
+        if (idx >= entityList.size()) {
             BusProvider.getInstance().post(new SyncEvent(SyncEvent.SYNC_END));
             return;
         }
         final ExEntity exEntity = entityList.get(idx);
-        final int nextid = idx+1;
+        final int nextid = idx + 1;
         List<PreFillFilter> preFillFilterList = prefillDao.findAllByTableName(exEntity.getTableName());
-        Log.e(TAG,"Filter Size:"+preFillFilterList.size());
+        Log.e(TAG, "Filter Size:" + preFillFilterList.size());
         if (preFillFilterList != null || !preFillFilterList.isEmpty()) {
             exEntity.setPrefillFilterList(preFillFilterList);
             Call<List<EntityData>> call = getEntityRestClient().downloadFilteredEntityDataMap(getPath(), exEntity);
@@ -354,14 +354,14 @@ public class KengaSyncroniser {
                         if (entityDataList != null) {
                             insertEntityDataTx(entityDataList, exEntity);
                         }
-                        if(!isBackgroundJob){
+                        if (!isBackgroundJob) {
                             ToastUtils.showLongToast("Sync successful. Downloaded " + entityDataList.size() + " items");
                         }
 //                        BusProvider.getInstance().post(new SyncEvent(SyncEvent.SYNC_END));
                     } catch (Exception ex) {
                         Log.e(TAG, ex.getMessage());
                     }
-                    forwardLoop(entityList,nextid,isBackgroundJob);
+                    forwardLoop(entityList, nextid, isBackgroundJob);
                 }
 
                 @Override
@@ -373,22 +373,22 @@ public class KengaSyncroniser {
     }
 
     public void cleanDirtyEntities(List<ExEntity> odxEntityList) {
-        try{
+        try {
             List<ExEntity> entityList = entityDao.loadAll();
-            for(ExEntity localEntity:entityList){
-                if(!isEntityFound(localEntity,odxEntityList)){
-                   entityDao.deleteExEntity(localEntity);
-                   entityDataDao.deleteTable(localEntity.getTableName());
+            for (ExEntity localEntity : entityList) {
+                if (!isEntityFound(localEntity, odxEntityList)) {
+                    entityDao.deleteExEntity(localEntity);
+                    entityDataDao.deleteTable(localEntity.getTableName());
                 }
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     private boolean isEntityFound(ExEntity localEntity, List<ExEntity> odxEntityList) {
-        for(ExEntity exEntity:odxEntityList){
-            if(exEntity.getTableName().equals(localEntity.getTableName())){
+        for (ExEntity exEntity : odxEntityList) {
+            if (exEntity.getTableName().equals(localEntity.getTableName())) {
                 return true;
             }
         }

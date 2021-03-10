@@ -145,7 +145,7 @@ public class Collect extends Application implements LocalizedApplication {
      * cursors and unclosed resources.
      */
     private void setupStrictMode() {
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .permitDiskReads()  // shared preferences are being read on main thread
@@ -155,7 +155,7 @@ public class Collect extends Application implements LocalizedApplication {
                     .detectAll()
                     .penaltyLog()
                     .build());
-        }
+        }*/
     }
 
     private void setupDagger() {

@@ -19,6 +19,12 @@
         android:key="password"
         android:title="@string/password"
         app:iconSpaceReserved="false" />
+    <EditTextPreference
+            android:dialogTitle="@string/mis_url"
+            android:inputType="textNoSuggestions"
+            android:key="mis_url"
+            android:title="@string/mis_url"
+            app:iconSpaceReserved="false" />
 
     <Preference
         android:key="custom_server_paths"

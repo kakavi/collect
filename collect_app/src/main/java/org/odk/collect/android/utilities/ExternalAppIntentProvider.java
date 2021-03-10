@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
+import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import org.javarosa.form.api.FormEntryPrompt;
@@ -13,6 +14,7 @@ import org.odk.collect.android.R;
 import org.odk.collect.android.exception.ExternalParamsException;
 import org.odk.collect.android.external.ExternalAppsUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExternalAppIntentProvider {
@@ -62,5 +64,15 @@ public class ExternalAppIntentProvider {
         return intent.getExtras().containsKey(RETURNED_DATA_NAME)
                 ? intent.getExtras().get(RETURNED_DATA_NAME)
                 : null;
+    }
+
+    @Nullable
+    public Map<String, String> getValuesFromKengaIntent(Intent intent) {
+        Map<String,String> intentValues = new HashMap<>();
+        Bundle extras = intent.getExtras();
+        for(String key : extras.keySet()) {
+            intentValues.put(key, extras.get(key)+"");
+        }
+        return intentValues;
     }
 }

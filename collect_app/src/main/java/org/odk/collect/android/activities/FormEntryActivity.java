@@ -55,12 +55,14 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.javarosa.core.model.Constants;
 import org.javarosa.core.model.FormDef;
 import org.javarosa.core.model.FormIndex;
 import org.javarosa.core.model.SelectChoice;
 import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.data.helper.Selection;
 import org.javarosa.core.model.instance.TreeElement;
+import org.javarosa.core.model.instance.TreeReference;
 import org.javarosa.form.api.FormEntryCaption;
 import org.javarosa.form.api.FormEntryController;
 import org.javarosa.form.api.FormEntryPrompt;
@@ -81,6 +83,7 @@ import org.odk.collect.android.dao.helpers.InstancesDaoHelper;
 import org.odk.collect.android.events.ReadPhoneStatePermissionRxEvent;
 import org.odk.collect.android.events.RxEventBus;
 import org.odk.collect.android.exception.JavaRosaException;
+import org.odk.collect.android.external.ExternalAppsUtils;
 import org.odk.collect.android.formentry.BackgroundAudioPermissionDialogFragment;
 import org.odk.collect.android.formentry.BackgroundAudioViewModel;
 import org.odk.collect.android.formentry.FormEndView;
@@ -154,10 +157,7 @@ import org.odk.collect.android.utilities.ScreenContext;
 import org.odk.collect.android.utilities.SnackbarUtils;
 import org.odk.collect.android.utilities.SoftKeyboardController;
 import org.odk.collect.android.utilities.ToastUtils;
-import org.odk.collect.android.widgets.DateTimeWidget;
-import org.odk.collect.android.widgets.QuestionWidget;
-import org.odk.collect.android.widgets.RangePickerDecimalWidget;
-import org.odk.collect.android.widgets.RangePickerIntegerWidget;
+import org.odk.collect.android.widgets.*;
 import org.odk.collect.android.widgets.interfaces.WidgetDataReceiver;
 import org.odk.collect.android.widgets.utilities.ExternalAppRecordingRequester;
 import org.odk.collect.android.widgets.utilities.FormControllerWaitingForDataRegistry;
@@ -846,9 +846,9 @@ public class FormEntryActivity extends CollectAbstractActivity implements Animat
             case RequestCodes.EX_STRING_CAPTURE:
             case RequestCodes.EX_INT_CAPTURE:
             case RequestCodes.EX_DECIMAL_CAPTURE:
-                Object externalValue = externalAppIntentProvider.getValueFromIntent(intent);
+                Map<String,String> externalValue = externalAppIntentProvider.getValuesFromKengaIntent(intent);
                 if (getCurrentViewIfODKView() != null) {
-                    setWidgetData(externalValue);
+                    setKengaWidgetData(externalValue);
                 }
                 break;
             case RequestCodes.EX_ARBITRARY_FILE_CHOOSER:
@@ -965,6 +965,64 @@ public class FormEntryActivity extends CollectAbstractActivity implements Animat
                     }
                 }
             }
+
+            if (!set) {
+                Timber.e("Attempting to return data to a widget or set of widgets not looking for data");
+            }
+        }
+    }
+
+    /**
+     * set widget data from Kenga external app, we created this method
+     * because kenga populates more than one field
+     *
+     * @param data
+     */
+    public void setKengaWidgetData(Map<String, String> data) {
+        ODKView currentViewIfODKView = getCurrentViewIfODKView();
+
+        if (currentViewIfODKView != null) {
+            boolean set = false;
+            FormController formController = Collect.getInstance().getFormController();
+            if (formController == null) {
+                return;
+            }
+            for (QuestionWidget widget : currentViewIfODKView.getWidgets()) {
+                FormEntryPrompt prompt = widget.getFormEntryPrompt();
+                TreeReference treeReference = (TreeReference) widget.getQuestionDetails().getPrompt().getQuestion().getBind().getReference();
+                String binding = treeReference.getNameLast();
+                if (data.containsKey(binding)) {
+                    try {
+                        switch (prompt.getDataType()) {
+                            case Constants.DATATYPE_TEXT:
+                                formController.saveAnswer(prompt.getIndex(),
+                                    ExternalAppsUtils.asStringData(data.get(binding)));
+                                ((StringWidget) widget).setDisplayValueFromModel();
+                                widget.showAnswerContainer();
+                                break;
+                            case Constants.DATATYPE_INTEGER:
+                                formController.saveAnswer(prompt.getIndex(),
+                                        ExternalAppsUtils.asIntegerData(data.get(binding)));
+                                ((StringWidget) widget).setDisplayValueFromModel();
+                                widget.showAnswerContainer();
+                                break;
+                            case Constants.DATATYPE_DECIMAL:
+                                formController.saveAnswer(prompt.getIndex(),
+                                        ExternalAppsUtils.asDecimalData(data.get(binding)));
+                                ((StringWidget) widget).setDisplayValueFromModel();
+                                widget.showAnswerContainer();
+                                break;
+                        }
+                    } catch (Exception e) {
+                        Timber.e(e);
+                        ToastUtils.showLongToast(currentViewIfODKView.getContext().getString(R.string.error_attaching_binary_file,
+                                e.getMessage()));
+                    }
+                }
+            }
+
+            waitingForDataRegistry.cancelWaitingForData();
+            set = true;
 
             if (!set) {
                 Timber.e("Attempting to return data to a widget or set of widgets not looking for data");
