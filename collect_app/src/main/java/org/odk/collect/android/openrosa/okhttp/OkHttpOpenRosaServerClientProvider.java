@@ -95,9 +95,9 @@ public class OkHttpOpenRosaServerClientProvider implements OpenRosaServerClientP
 
             DispatchingAuthenticator.Builder daBuilder = new DispatchingAuthenticator.Builder();
             daBuilder.with("digest", new DigestAuthenticator(cred));
-            if (scheme.equalsIgnoreCase("https")) {
-                daBuilder.with("basic", new BasicAuthenticator(cred));
-            }
+//            if (scheme.equalsIgnoreCase("https")) {
+            daBuilder.with("basic", new BasicAuthenticator(cred));
+//            }
 
             DispatchingAuthenticator authenticator = daBuilder.build();
             ConcurrentHashMap<String, CachingAuthenticator> authCache = new ConcurrentHashMap<>();
